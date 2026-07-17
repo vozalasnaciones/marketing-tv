@@ -1,1 +1,17 @@
 
+[
+    {
+        "type":"image",
+        "file":"media/promo1.jpg",
+        "duration":8
+    },
+    {
+        "type":"image",
+        "file":"media/promo2.jpg",
+        "duration":8
+    },
+    {
+        "type":"video",
+        "file":"media/video1.mp4"
+    }
+]
