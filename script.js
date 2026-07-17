@@ -52,7 +52,7 @@ function playItem() {
         video.autoplay = true;
         video.muted = false;
         video.defaultMuted = false;
-        video.controls = false;
+        video.controls = true;
         video.loop = false;
         video.playsInline = true;
 
@@ -65,14 +65,11 @@ function playItem() {
 
         viewer.appendChild(video);
 
-        video.play()
-            .then(() => {
-                console.log("Video reproduciéndose con audio");
-            })
-            .catch(err => {
-                console.log("Autoplay bloqueado:", err);
-                next();
-            });
+        video.load();
+
+video.oncanplay = () => {
+    video.play().catch(console.error);
+};
 
         video.onended = () => {
             next();
