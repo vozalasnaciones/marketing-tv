@@ -50,14 +50,13 @@ function playItem() {
 
         video.src = item.file;
         video.autoplay = true;
-        video.muted = true;
-        video.defaultMuted = true;
+        video.muted = false;
+        video.defaultMuted = false;
         video.controls = false;
         video.loop = false;
         video.playsInline = true;
 
         video.setAttribute("autoplay", "");
-        video.setAttribute("muted", "");
         video.setAttribute("playsinline", "");
 
         video.style.width = "100%";
@@ -68,10 +67,10 @@ function playItem() {
 
         video.play()
             .then(() => {
-                console.log("Video reproduciéndose");
+                console.log("Video reproduciéndose con audio");
             })
             .catch(err => {
-                console.log("Autoplay bloqueado", err);
+                console.log("Autoplay bloqueado:", err);
                 next();
             });
 
@@ -84,10 +83,7 @@ function playItem() {
             next();
         };
     }
-
 }
-
-// ← ESTA LLAVE FALTABA
 
 function next() {
 
