@@ -1,7 +1,8 @@
 let playlist = [];
 let current = 0;
 
-const viewer = document.getElementById("viewer");
+const img = document.getElementById("imageViewer");
+const video = document.getElementById("videoViewer");
 
 fetch("playlist.json")
     .then(response => response.json())
@@ -18,18 +19,23 @@ fetch("playlist.json")
 
 function playItem() {
 
-    viewer.innerHTML = "";
-
     const item = playlist[current];
 
     if (!item) return;
 
+    // Ocultar ambos
+    img.style.display = "none";
+    video.style.display = "none";
+
     // ---------- IMAGEN ----------
     if (item.type === "image") {
 
-        const img = document.createElement("img");
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
 
         img.src = item.file;
+        img.style.display = "block";
 
         img.onload = () => {
             setTimeout(next, (item.duration || 10) * 1000);
@@ -39,44 +45,42 @@ function playItem() {
             console.log("No se pudo cargar:", item.file);
             next();
         };
-
-        viewer.appendChild(img);
     }
 
     // ---------- VIDEO ----------
     else if (item.type === "video") {
 
-        const video = document.createElement("video");
+        img.style.display = "none";
 
+        video.style.display = "block";
         video.src = item.file;
+
         video.autoplay = true;
-        video.muted = false;
-        video.defaultMuted = false;
         video.controls = true;
         video.loop = false;
         video.playsInline = true;
-
-        video.setAttribute("autoplay", "");
-        video.setAttribute("playsinline", "");
-
-        video.style.width = "100%";
-        video.style.height = "100%";
-        video.style.objectFit = "contain";
-
-        viewer.appendChild(video);
+        video.muted = false;
+        video.defaultMuted = false;
+        video.volume = 1.0;
 
         video.load();
 
-video.oncanplay = () => {
-    video.play().catch(console.error);
-};
+        video.oncanplay = () => {
+            video.play()
+                .then(() => {
+                    console.log("Video reproduciéndose");
+                })
+                .catch(err => {
+                    console.log("Error:", err);
+                });
+        };
 
         video.onended = () => {
             next();
         };
 
         video.onerror = () => {
-            console.log("Error al reproducir el video");
+            console.log("Error al reproducir video");
             next();
         };
     }
