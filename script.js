@@ -17,24 +17,28 @@ async function loadPlaylist(firstLoad = false) {
 
         const response = await fetch("playlist.json?t=" + Date.now());
 
+        if (!response.ok) {
+            throw new Error("No se pudo cargar playlist.json");
+        }
+
         const text = await response.text();
 
-        if (text === lastPlaylist) return;
+        if (text === lastPlaylist && !firstLoad) return;
 
         lastPlaylist = text;
 
         playlist = JSON.parse(text);
 
-        console.log("Playlist actualizada");
+        console.log("Playlist cargada:", playlist);
 
         if (firstLoad) {
             current = 0;
             playItem();
         }
 
-    } catch (e) {
+    } catch (err) {
 
-        console.error("Error cargando playlist:", e);
+        console.error(err);
 
     }
 
@@ -50,7 +54,7 @@ async function checkPlaylist() {
 
         if (text !== lastPlaylist) {
 
-            console.log("Se detectó una nueva playlist");
+            console.log("Nueva playlist detectada");
 
             lastPlaylist = text;
 
@@ -58,9 +62,9 @@ async function checkPlaylist() {
 
         }
 
-    } catch (e) {
+    } catch (err) {
 
-        console.log(e);
+        console.error(err);
 
     }
 
@@ -76,21 +80,37 @@ function playItem() {
 
     const item = playlist[current];
 
+    // Ocultar todo
     img.style.display = "none";
     video.style.display = "none";
 
+    // Limpiar video
     video.pause();
     video.removeAttribute("src");
     video.load();
+
+    let file = item.file;
+
+    // Si el workflow olvidó agregar "media/", lo agregamos
+    if (!file.startsWith("media/")) {
+        file = "media/" + file;
+    }
+
+    console.log("Reproduciendo:", file);
 
     // ---------------- IMAGEN ----------------
 
     if (item.type === "image") {
 
-        img.src = item.file;
+        img.onload = null;
+        img.onerror = null;
+
+        img.src = file;
         img.style.display = "block";
 
         img.onload = () => {
+
+            console.log("Imagen cargada");
 
             setTimeout(next, (item.duration || 10) * 1000);
 
@@ -98,7 +118,7 @@ function playItem() {
 
         img.onerror = () => {
 
-            console.log("Error imagen:", item.file);
+            console.error("No se pudo cargar imagen:", file);
 
             next();
 
@@ -110,43 +130,56 @@ function playItem() {
 
     else if (item.type === "video") {
 
-        video.style.display = "block";
+        video.onloadeddata = null;
+        video.onended = null;
+        video.onerror = null;
 
-        video.src = item.file;
+        video.src = file;
+
+        video.style.display = "block";
 
         video.autoplay = true;
         video.controls = false;
         video.loop = false;
         video.playsInline = true;
         video.preload = "auto";
-
         video.muted = false;
         video.defaultMuted = false;
         video.volume = 1;
 
         video.load();
 
-        video.oncanplay = () => {
+        video.onloadeddata = () => {
 
-            video.play().catch(err => {
+            console.log("Video cargado:", file);
 
-                console.log("Error play:", err);
+            video.play()
+                .then(() => {
 
-                next();
+                    console.log("Video reproduciéndose");
 
-            });
+                })
+                .catch(err => {
+
+                    console.error("Error al reproducir:", err);
+
+                    next();
+
+                });
 
         };
 
         video.onended = () => {
 
+            console.log("Video finalizado");
+
             next();
 
         };
 
-        video.onerror = () => {
+        video.onerror = (e) => {
 
-            console.log("Error video:", item.file);
+            console.error("Error cargando video:", file, e);
 
             next();
 
