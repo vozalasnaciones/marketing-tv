@@ -1,4 +1,6 @@
 [
+  {"type":"image","file":"media/12.png","duration":10}
+,
   {"type":"video","file":"media/Ventilador.mp4","duration":10}
 ,
   {"type":"video","file":"media/anuncio.mp4","duration":10}
