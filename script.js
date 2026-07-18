@@ -5,142 +5,164 @@ let lastPlaylist = "";
 const img = document.getElementById("imageViewer");
 const video = document.getElementById("videoViewer");
 
+// Cargar playlist inicial
 loadPlaylist(true);
+
+// Revisar cambios cada 15 segundos
 setInterval(checkPlaylist, 15000);
 
-async function loadPlaylist(first = false) {
+async function loadPlaylist(firstLoad = false) {
+
     try {
-        const res = await fetch("playlist.json?t=" + Date.now());
 
-        if (!res.ok) throw new Error("No se pudo cargar playlist");
+        const response = await fetch("playlist.json?t=" + Date.now());
 
-        const text = await res.text();
+        const text = await response.text();
 
-        if (text === lastPlaylist && !first) return;
+        if (text === lastPlaylist) return;
 
         lastPlaylist = text;
+
         playlist = JSON.parse(text);
 
-        console.log("Playlist:", playlist);
+        console.log("Playlist actualizada");
 
-        if (first) {
+        if (firstLoad) {
             current = 0;
             playItem();
         }
 
     } catch (e) {
-        console.error(e);
+
+        console.error("Error cargando playlist:", e);
+
     }
+
 }
 
 async function checkPlaylist() {
+
     try {
 
-        const res = await fetch("playlist.json?t=" + Date.now());
-        const text = await res.text();
+        const response = await fetch("playlist.json?t=" + Date.now());
+
+        const text = await response.text();
 
         if (text !== lastPlaylist) {
+
+            console.log("Se detectó una nueva playlist");
+
             lastPlaylist = text;
+
             playlist = JSON.parse(text);
-            console.log("Playlist actualizada");
+
         }
 
-    } catch(e){
-        console.error(e);
+    } catch (e) {
+
+        console.log(e);
+
     }
+
 }
 
-function playItem(){
+function playItem() {
 
-    if(playlist.length===0) return;
+    if (playlist.length === 0) return;
 
-    if(current>=playlist.length)
-        current=0;
+    if (current >= playlist.length) {
+        current = 0;
+    }
 
-    const item=playlist[current];
+    const item = playlist[current];
 
-    let file=item.file;
+    img.style.display = "none";
+    video.style.display = "none";
 
-    if(!file.startsWith("media/"))
-        file="media/"+file;
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
 
-    console.log("Reproduciendo:",file);
+    // ---------------- IMAGEN ----------------
 
-    img.style.display="none";
-    video.style.display="none";
+    if (item.type === "image") {
 
-    img.onload=null;
-    img.onerror=null;
+        img.src = item.file;
+        img.style.display = "block";
 
-    video.onended=null;
-    video.onerror=null;
+        img.onload = () => {
 
-    // IMAGEN
-
-    if(item.type==="image"){
-
-        img.src=file;
-        img.style.display="block";
-
-        img.onload=()=>{
-
-            setTimeout(next,(item.duration||10)*1000);
+            setTimeout(next, (item.duration || 10) * 1000);
 
         };
 
-        img.onerror=()=>{
+        img.onerror = () => {
 
-            console.log("Error imagen");
+            console.log("Error imagen:", item.file);
 
             next();
 
         };
 
-        return;
     }
 
-    // VIDEO
+    // ---------------- VIDEO ----------------
 
-    video.style.display="block";
+    else if (item.type === "video") {
 
-    video.src=file;
+        video.style.display = "block";
 
-    video.currentTime=0;
+        video.src = item.file;
 
-    video.play().then(()=>{
+        video.autoplay = true;
+        video.controls = false;
+        video.loop = false;
+        video.playsInline = true;
+        video.preload = "auto";
 
-        console.log("Video iniciado");
+        video.muted = false;
+        video.defaultMuted = false;
+        video.volume = 1;
 
-    }).catch(err=>{
+        video.load();
 
-        console.error(err);
+        video.oncanplay = () => {
 
-    });
+            video.play().catch(err => {
 
-    video.onended=()=>{
+                console.log("Error play:", err);
 
-        console.log("Terminó video");
+                next();
 
-        next();
+            });
 
-    };
+        };
 
-    video.onerror=()=>{
+        video.onended = () => {
 
-        console.log("Error video");
+            next();
 
-        next();
+        };
 
-    };
+        video.onerror = () => {
+
+            console.log("Error video:", item.file);
+
+            next();
+
+        };
+
+    }
 
 }
 
-function next(){
+function next() {
 
     current++;
 
-    if(current>=playlist.length)
-        current=0;
+    if (current >= playlist.length) {
+        current = 0;
+    }
 
     playItem();
 
