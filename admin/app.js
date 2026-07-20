@@ -1,9 +1,8 @@
-async function init(){
+let mediaFiles = [];
+async function init() {
 
-    const files = await getFiles();
+    mediaFiles = await getFiles();
 
-    renderLayout(files);
+    renderLayout(mediaFiles);
 
 }
-
-init();
