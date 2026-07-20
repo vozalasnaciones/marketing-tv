@@ -1,8 +1,12 @@
-let mediaFiles = [];
+const state = {
+    files: [],
+    filteredFiles: []
+};
 async function init() {
 
-    mediaFiles = await getFiles();
+    state.files = await getFiles();
+    state.filteredFiles = [...state.files];
 
-    renderLayout(mediaFiles);
+    renderLayout();
 
 }
