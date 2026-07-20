@@ -226,13 +226,15 @@ function renderLibrary(files){
 
     content.innerHTML=`
 
-        <div class="cards">
+    ${renderStats(files)}
 
-            ${files.map(createCard).join("")}
+    <div class="cards">
 
-        </div>
+        ${files.map(createCard).join("")}
 
-    `;
+    </div>
+
+`;
 
 }
 
