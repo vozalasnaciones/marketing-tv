@@ -2,7 +2,7 @@
    Marketing TV CMS - Layout
 =========================== */
 
-function renderLayout() {
+function renderLayout(files) {
 
     document.getElementById("app").innerHTML = `
         <div class="layout">
@@ -131,23 +131,31 @@ function renderHeader() {
     `;
 
 }
+function renderLibrary(files){
 
-/* ===========================
-   Biblioteca (Temporal)
-=========================== */
+    const content = document.getElementById("content");
 
-function renderLibrary() {
+    if(files.length===0){
 
-    document.getElementById("content").innerHTML = `
+        content.innerHTML=`
+
+            <div class="text-center p-5">
+
+                <h3>No hay archivos</h3>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    content.innerHTML=`
 
         <div class="cards">
 
-            ${placeholderCard("image")}
-            ${placeholderCard("video")}
-            ${placeholderCard("video")}
-            ${placeholderCard("image")}
-            ${placeholderCard("video")}
-            ${placeholderCard("video")}
+            ${files.map(createCard).join("")}
 
         </div>
 
@@ -155,15 +163,45 @@ function renderLibrary() {
 
 }
 
-/* ===========================
-   Tarjeta temporal
-=========================== */
+function createCard(file){
 
-function placeholderCard(type) {
+    const type = getFileType(file);
 
-    const icon = type === "video"
-        ? "bi-film"
-        : "bi-image";
+    let preview="";
+
+    if(type==="image"){
+
+        preview=`
+
+            <img src="${file.download}" loading="lazy">
+
+        `;
+
+    }
+
+    else if(type==="video"){
+
+        preview=`
+
+            <video
+                src="${file.download}"
+                muted
+                preload="metadata">
+            </video>
+
+        `;
+
+    }
+
+    else{
+
+        preview=`
+
+            <i class="bi bi-file-earmark"></i>
+
+        `;
+
+    }
 
     return `
 
@@ -171,7 +209,7 @@ function placeholderCard(type) {
 
             <div class="preview">
 
-                <i class="bi ${icon}"></i>
+                ${preview}
 
             </div>
 
@@ -179,13 +217,15 @@ function placeholderCard(type) {
 
                 <div class="card-title">
 
-                    Archivo de ejemplo
+                    ${file.name}
 
                 </div>
 
                 <div class="card-meta">
 
-                    ${type.toUpperCase()} · 2.3 MB
+                    ${type.toUpperCase()}
+                    ·
+                    ${formatSize(file.size)}
 
                 </div>
 
