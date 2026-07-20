@@ -336,3 +336,21 @@ function createCard(file){
     `;
 
 }
+
+function initSearch(){
+
+    const input = document.getElementById("searchInput");
+
+    input.addEventListener("input", function(){
+
+        const text = this.value.toLowerCase();
+
+        const filtered = mediaFiles.filter(file =>
+            file.name.toLowerCase().includes(text)
+        );
+
+        renderLibrary(filtered);
+
+    });
+
+}
