@@ -22,7 +22,7 @@ function renderLayout(files) {
 
     renderSidebar();
     renderHeader();
-    renderLibrary();
+    renderLibrary(files);
 
 }
 
