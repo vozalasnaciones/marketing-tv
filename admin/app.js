@@ -1,6 +1,8 @@
 async function init(){
 
-    renderLayout();
+    const files = await getFiles();
+
+    renderLayout(files);
 
 }
 
