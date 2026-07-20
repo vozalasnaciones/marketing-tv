@@ -1,61 +1,76 @@
-const API="https://marketingapi.adodiaz51.workers.dev/files";
+const API = "https://marketingapi.adodiaz51.workers.dev/files";
 
-async function load(){
+console.log("🚀 app.js cargó");
 
-const response=await fetch(API);
+async function load() {
 
-const files=await response.json();
+    try {
 
-let videos=0;
-let images=0;
-let total=0;
+        console.log("Consultando API...");
 
-const list=document.getElementById("fileList");
+        const response = await fetch(API);
 
-list.innerHTML="";
+        console.log("Status:", response.status);
 
-files.forEach(file=>{
+        const files = await response.json();
 
-total+=file.size;
+        console.log(files);
 
-if(file.type==="video")videos++;
-else images++;
+        const list = document.getElementById("fileList");
 
-list.innerHTML+=`
+        list.innerHTML = "";
 
-<div class="file">
+        let videos = 0;
+        let images = 0;
+        let total = 0;
 
-<div class="left">
+        for (const file of files) {
 
-<i class="bi ${file.type==="video"?"bi-camera-reels-fill text-primary":"bi-image-fill text-success"}"></i>
+            console.log(file);
 
-<div class="info">
+            total += Number(file.size);
 
-<h5>${file.name}</h5>
+            if (file.type === "video")
+                videos++;
+            else
+                images++;
 
-<small>${(file.size/1024/1024).toFixed(2)} MB</small>
+            const div = document.createElement("div");
+            div.className = "file";
 
-</div>
+            div.innerHTML = `
+                <div class="left">
+                    <i class="bi ${file.type === "video"
+                        ? "bi-camera-reels-fill text-primary"
+                        : "bi-image-fill text-success"}"></i>
 
-</div>
+                    <div class="info">
+                        <h5>${file.name}</h5>
+                        <small>${(Number(file.size) / 1024 / 1024).toFixed(2)} MB</small>
+                    </div>
+                </div>
 
-<div class="menu">
+                <div class="menu">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </div>
+            `;
 
-<i class="bi bi-three-dots-vertical"></i>
+            list.appendChild(div);
 
-</div>
+        }
 
-</div>
+        document.getElementById("videos").textContent = videos;
+        document.getElementById("images").textContent = images;
+        document.getElementById("space").textContent =
+            (total / 1024 / 1024).toFixed(1) + " MB";
 
-`;
+    } catch (e) {
 
-});
+        console.error(e);
 
-document.getElementById("videos").innerHTML=videos;
+        alert(e.message);
 
-document.getElementById("images").innerHTML=images;
-
-document.getElementById("space").innerHTML=(total/1024/1024).toFixed(1)+" MB";
+    }
 
 }
 
