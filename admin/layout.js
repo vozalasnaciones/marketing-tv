@@ -24,6 +24,8 @@ function renderLayout(files) {
     renderHeader();
     renderLibrary(files);
 
+   initSearch();
+
 }
 
 /* ===========================
@@ -107,6 +109,7 @@ function renderHeader() {
         <div class="header-right">
 
             <input
+                id="searchInput"
                 class="search"
                 type="text"
                 placeholder="Buscar archivos..."
