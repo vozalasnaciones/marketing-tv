@@ -130,7 +130,80 @@ function renderHeader() {
 
     `;
 
+}function renderStats(files){
+
+    const videos = files.filter(f=>getFileType(f)=="video").length;
+
+    const images = files.filter(f=>getFileType(f)=="image").length;
+
+    const totalBytes = files.reduce((t,f)=>t+f.size,0);
+
+    return `
+
+        <div class="stats">
+
+            ${statCard(
+                "Videos",
+                videos,
+                "bi-camera-reels"
+            )}
+
+            ${statCard(
+                "Imágenes",
+                images,
+                "bi-image"
+            )}
+
+            ${statCard(
+                "Espacio",
+                formatSize(totalBytes),
+                "bi-hdd"
+            )}
+
+            ${statCard(
+                "Pantallas",
+                "8",
+                "bi-tv"
+            )}
+
+        </div>
+
+    `;
+
 }
+function statCard(title,value,icon){
+
+    return `
+
+        <div class="stat-card">
+
+            <div class="stat-header">
+
+                <div class="stat-title">
+
+                    ${title}
+
+                </div>
+
+                <i class="bi ${icon}"></i>
+
+            </div>
+
+            <div class="stat-number">
+
+                ${value}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+
+
 function renderLibrary(files){
 
     const content = document.getElementById("content");
