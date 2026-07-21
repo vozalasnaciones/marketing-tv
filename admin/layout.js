@@ -2,7 +2,7 @@
    Marketing TV CMS - Layout
 =========================== */
 
-function renderLayout(files) {
+function renderLayout() {
 
     document.getElementById("app").innerHTML = `
         <div class="layout">
@@ -207,7 +207,7 @@ function statCard(title,value,icon){
 
 
 
-function renderLibrary(files){
+function renderLibrary(){
 
     const content = document.getElementById("content");
 
