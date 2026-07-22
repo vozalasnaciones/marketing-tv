@@ -5,9 +5,10 @@ const state = {
 
 async function init() {
 
-    console.log("INIT");
+    state.files = await getFiles();
+    state.filteredFiles = [...state.files];
 
-    document.getElementById("app").innerHTML = "<h1 style='padding:40px'>Hola Mundo</h1>";
+    renderLayout();
 
 }
 
