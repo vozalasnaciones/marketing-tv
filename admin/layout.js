@@ -283,7 +283,7 @@ function createCard(file){
 
     return `
 
-        <div class="media-card">
+        <div class="media-card" onclick='openDrawer(${JSON.stringify(file)})'>
 
             <div class="preview">
 
@@ -352,5 +352,66 @@ function initSearch(){
         renderLibrary();
 
     });
+
+}
+.drawer{
+
+    position:fixed;
+
+    right:-420px;
+
+    top:0;
+
+    width:420px;
+
+    height:100%;
+
+    background:#fff;
+
+    box-shadow:-8px 0 30px rgba(0,0,0,.12);
+
+    transition:.3s;
+
+    z-index:999;
+
+    overflow:auto;
+
+    padding:24px;
+
+}
+
+.drawer.open{
+
+    right:0;
+
+}
+
+.drawer-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.drawer-preview{
+
+    width:100%;
+
+    border-radius:12px;
+
+    margin-bottom:20px;
+
+}
+
+.drawer-info b{
+
+    display:block;
+
+    margin-top:16px;
 
 }
