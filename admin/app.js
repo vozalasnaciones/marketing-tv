@@ -2,11 +2,13 @@ const state = {
     files: [],
     filteredFiles: []
 };
+
 async function init() {
 
-    state.files = await getFiles();
-    state.filteredFiles = [...state.files];
+    console.log("INIT");
 
-    renderLayout();
+    document.getElementById("app").innerHTML = "<h1 style='padding:40px'>Hola Mundo</h1>";
 
 }
+
+init();
