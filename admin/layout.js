@@ -22,7 +22,7 @@ function renderLayout() {
 
     renderSidebar();
     renderHeader();
-    renderLibrary(files);
+    renderLibrary();
 
    initSearch();
 
@@ -211,7 +211,7 @@ function renderLibrary(){
 
     const content = document.getElementById("content");
 
-    if(files.length===0){
+    if(state.filteredFiles.length===0){
 
         content.innerHTML=`
 
@@ -229,11 +229,11 @@ function renderLibrary(){
 
     content.innerHTML=`
 
-    ${renderStats(files)}
+    ${renderStats(state.filteredFiles)}
 
     <div class="cards">
 
-        ${files.map(createCard).join("")}
+        ${state.filteredFiles.map(createCard).join("")}
 
     </div>
 
@@ -341,15 +341,15 @@ function initSearch(){
 
     const input = document.getElementById("searchInput");
 
-    input.addEventListener("input", function(){
+    input.addEventListener("input", () => {
 
-        const text = this.value.toLowerCase();
+        const text = input.value.toLowerCase();
 
-        const filtered = mediaFiles.filter(file =>
+        state.filteredFiles = state.files.filter(file =>
             file.name.toLowerCase().includes(text)
         );
 
-        renderLibrary(filtered);
+        renderLibrary();
 
     });
 
